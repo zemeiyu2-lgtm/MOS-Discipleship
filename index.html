@@ -700,7 +700,11 @@ function normalizeDailyRows(rows){
     const rawSeq=pick(r,'星期序','日序');
     const seq=Number(rawSeq||0);
     const week=Number(pick(r,'week','周次')||0);
-    const dow=rawDow!=='' ? Number(rawDow) : (seq>=1 ? ((seq-1)%7) : -1);
+    const nDow=rawDow!=='' ? Number(rawDow) : NaN;
+    // CSV发布格式使用 1–7 表示周日–周六；页面内部统一使用 0–6。
+    // 同时兼容旧格式 0–6。
+    const dow=Number.isFinite(nDow) ? (nDow>=1 && nDow<=7 ? nDow-1 : nDow)
+      : (seq>=1 ? ((seq-1)%7) : -1);
     const explicitId=pick(r,'day_id','日ID');
     const day_id=explicitId || (week>0&&dow>=0 ? `W${String(week).padStart(2,'0')}D${String(dow+1).padStart(2,'0')}` : '');
     return {
