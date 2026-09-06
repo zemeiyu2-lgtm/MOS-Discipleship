@@ -92,6 +92,57 @@ body{background:#F5F1E8;color:#262522}
   .scripture{padding:15px 16px;line-height:1.95}
 }
 
+
+/* MOS-DIS V2.2：中心引导 + 自然阅读 + 进一步减法 */
+.top{max-width:820px;margin:0 auto 18px}
+.brand{justify-content:center;width:100%}
+.top .ghost{position:absolute;right:22px}
+.hero.week-hero{box-shadow:none;border-color:rgba(35,79,66,.035)}
+.hero.week-hero .week-kicker{text-align:center}
+.hero.week-hero h1{text-align:center}
+.hero.week-hero .week-guide{text-align:center}
+.today-preview .section-head{justify-content:center}
+.today-preview .section-head h2{font-size:20px}
+.today-preview .home-week-progress{position:absolute;right:24px}
+.week-top{justify-content:center;text-align:center}
+.week-top .title,.week-top .theme{text-align:center}
+.section-head h2,.section-head .link{margin-left:auto;margin-right:auto}
+.day-step .step-name{text-align:center;display:block;margin-top:4px;color:#7b756b}
+.day-step .ref{text-align:center}
+.step-title{text-align:center;margin:12px 0 18px}
+.step-copy{text-align:left;margin-left:auto;margin-right:auto;max-width:680px}
+.choice-grid{max-width:660px;margin:14px auto 0}
+.choice{text-align:left;padding:15px 16px;border-radius:14px}
+.step-nav{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:18px}
+.step-nav .primary,.step-nav .secondary{min-width:96px}
+.action-box{max-width:680px;margin:16px auto;border-radius:15px;text-align:left}
+.daily-label{display:none}
+.daily-block{margin:14px 0}
+.day-step[data-step="1"] .daily-label{display:none}
+.day-step[data-step="5"] .step-center{text-align:center}
+.day-step[data-step="5"] .step-center p{display:none}
+.sheet-head{align-items:center}
+.sheet-head>div:first-child{flex:1;text-align:center}
+.sheet-head .ref{text-align:center}
+.sheet-head .close{position:absolute;right:20px}
+#dayStepbar{max-width:300px;margin:0 auto 14px}
+#view-home .today-preview-core{margin-left:auto;margin-right:auto;text-align:left}
+@media(max-width:600px){
+ .app{max-width:100%;padding:14px 12px 82px}
+ .top{margin-bottom:12px}
+ .top .ghost{right:14px}
+ .brand strong{font-size:17px}
+ .hero.week-hero{padding:24px 16px 22px;border-radius:22px}
+ .week-hero h1{font-size:29px}
+ .week-guide{font-size:14px;line-height:1.72}
+ .today-preview{padding:15px 14px}
+ .today-preview .home-week-progress{right:16px}
+ .sheet{padding:16px 14px 22px}
+ .step-title{font-size:24px;margin:10px 0 16px}
+ .choice{padding:14px 14px}
+ .step-nav .primary,.step-nav .secondary{min-width:88px}
+}
+
 </style>
 </head>
 <body>
@@ -151,7 +202,7 @@ body{background:#F5F1E8;color:#262522}
   </section>
   <section class="card profile">
     <div class="section-head"><h2 style="margin:0;color:var(--green);font-size:17px">原则</h2></div>
-    <div class="notice">记录的是完成与回应，不是属灵分数。</div>
+    
     <button class="secondary" style="width:100%" onclick="openSettings()">设置</button>
   </section>
 </section>
@@ -195,7 +246,7 @@ body{background:#F5F1E8;color:#262522}
   </section>
 
   <section class="day-step" data-step="5">
-    <div class="step-center"><div class="done-mark">✓</div><h3>已完成</h3><p>今天的回应已保存。</p></div>
+    <div class="step-center"><div class="done-mark">✓</div><h3>已完成</h3></div>
     <div class="step-nav"><button class="secondary" onclick="closeDay()">关闭</button><button class="primary" id="nextDayBtn" onclick="openNextDay()">下一天</button></div>
   </section>
 </div></div>
