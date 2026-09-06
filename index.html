@@ -143,6 +143,39 @@ body{background:#F5F1E8;color:#262522}
  .step-nav .primary,.step-nav .secondary{min-width:88px}
 }
 
+
+/* MOS-DIS V2.3：去重复 + 中心阅读进一步优化 */
+#view-home .today-preview{display:none}
+#view-home .home-day-strip{margin-top:18px}
+#view-home .hero-action .primary{min-width:150px;font-size:16px}
+
+/* 今日页面：减少重复标题，步骤成为唯一视觉锚点 */
+#dayModal .sheet-head{display:none}
+#dayModal .sheet{padding-top:14px}
+#dayModal .stepbar{margin-top:2px;margin-bottom:16px}
+#dayModal .step-name{font-size:12px;letter-spacing:.8px;text-align:center;margin-bottom:10px}
+#dayModal .ref{text-align:center}
+#dayModal .step-title{text-align:center;margin:10px 0 16px}
+#dayModal .step-copy{max-width:650px;margin:0 auto;text-align:left}
+#dayModal .choice-grid{max-width:600px;width:92%;margin:16px auto 0}
+#dayModal .choice{padding:15px 18px;text-align:left;min-height:54px}
+#dayModal .choice-dot{margin-right:10px}
+#dayModal .action-box{max-width:600px;width:92%;margin:16px auto;text-align:left}
+#dayModal .step-nav{justify-content:center;gap:10px;margin-top:20px}
+#dayModal .step-nav .primary,#dayModal .step-nav .secondary{min-width:96px}
+#dayModal .step-center{padding-top:18px}
+#dayModal .sheet-head + .stepbar{margin-top:0}
+/* 练习页只留核心动作；关系/使命由内容层另行承接，不占主阅读区 */
+#dayModal .day-step[data-step="4"] #dayRelationWrap,
+#dayModal .day-step[data-step="4"] #dayMissionWrap{display:none!important}
+/* 移除页面底部仅用于解释操作的提示性小字 */
+#view-home .home-progress,.footer-note{display:none}
+@media(max-width:600px){
+  #dayModal .sheet{padding:12px 12px 20px}
+  #dayModal .choice-grid,#dayModal .action-box{width:94%}
+  #dayModal .step-title{font-size:24px;margin:8px 0 14px}
+}
+
 </style>
 </head>
 <body>
@@ -159,7 +192,7 @@ body{background:#F5F1E8;color:#262522}
     <div class="week-kicker" id="homeWeekKicker">第1周 · 看见自己</div>
     <h1 id="homeWeekTitle">主题</h1>
     <div class="week-guide"><strong>本周</strong><span id="homeWeekTheme">—</span></div>
-    <div class="hero-action"><button class="primary" onclick="openToday()">今天</button></div>
+    <div class="hero-action"><button class="primary" onclick="openToday()">开始</button></div>
   </section>
 
   <section class="card today-preview">
