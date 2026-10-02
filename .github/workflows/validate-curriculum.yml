@@ -1,0 +1,24 @@
+name: MOS-DIS Curriculum Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "mos-52w.csv"
+      - "mos-364d.csv"
+      - "tools/validate-curriculum.py"
+      - ".github/workflows/validate-curriculum.yml"
+  pull_request:
+    paths:
+      - "mos-52w.csv"
+      - "mos-364d.csv"
+      - "tools/validate-curriculum.py"
+      - ".github/workflows/validate-curriculum.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate MOS-DIS / BILA curriculum
+        run: python tools/validate-curriculum.py
