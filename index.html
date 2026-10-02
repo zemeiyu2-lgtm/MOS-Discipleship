@@ -125,7 +125,7 @@ button:active{transform:translateY(1px)}
   </section>
 </div></div>
 
-<div class="modal" id="settingsModal"><div class="sheet"><div class="sheet-head"><div><div class="ref">MOS设置</div><h2>设置</h2></div><button class="close" onclick="closeSettings()">×</button></div><div class="daily-block"><div class="daily-label">我的名字</div><input id="nameInput" style="width:100%;padding:11px;border:1px solid var(--line);border-radius:12px" placeholder="姓名"></div><div class="daily-block"><div class="daily-label">每日提醒</div><button class="secondary" style="width:100%" onclick="toggleReminder()" id="reminderBtn">开启提醒</button><div id="reminderStatus" style="font-size:10px;color:var(--muted);margin-top:5px"></div></div><div class="sheet-actions"><button class="primary" onclick="saveSettings()">保存</button><button class="secondary" onclick="closeSettings()">关闭</button></div></div></div>
+<div class="modal" id="settingsModal"><div class="sheet"><div class="sheet-head"><div><div class="ref">MOS设置</div><h2>设置</h2></div><button class="close" onclick="closeSettings()">×</button></div><div class="daily-block"><div class="daily-label">我的名字</div><input id="nameInput" style="width:100%;padding:11px;border:1px solid var(--line);border-radius:12px" placeholder="姓名"></div><div class="daily-block"><div class="daily-label">每日提醒</div><button class="secondary" style="width:100%" onclick="toggleReminder()" id="reminderBtn">开启提醒</button><div id="reminderStatus" style="font-size:10px;color:var(--muted);margin-top:5px"></div></div><div class="daily-block"><div class="daily-label">跨计算机</div><div class="notice">进度保存在当前浏览器。要在另一台电脑继续，请先导出进度，再在另一台电脑导入；课程内容由 GitHub 统一提供。</div><div class="sheet-actions"><button class="secondary" onclick="exportProgress()">导出我的进度</button><button class="secondary" onclick="document.getElementById('progressFile').click()">导入进度</button></div><input id="progressFile" type="file" accept="application/json,.json" style="display:none" onchange="importProgress(event)"></div><div class="sheet-actions"><button class="primary" onclick="saveSettings()">保存</button><button class="secondary" onclick="closeSettings()">关闭</button></div></div></div>
 
 <script>
 window.__MOS_EMBEDDED = true;
@@ -656,7 +656,7 @@ const STAGES=[
 const DOW=['主日','周一','周二','周三','周四','周五','周六'];
 let curriculum=[];let daily=[];let dailyById=Object.create(null);let dailyByKey=Object.create(null);let currentWeek=1;let selectedDay=null;let selectedChoice='';
 let user=localStorage.getItem('mos_user')||'游客';
-let state=JSON.parse(localStorage.getItem('mos_state_v14')||localStorage.getItem('mos_state_v11')||localStorage.getItem('mos_state_v1')||'{}');
+let state=JSON.parse(localStorage.getItem('mos_state_v15')||localStorage.getItem('mos_state_v14')||localStorage.getItem('mos_state_v11')||localStorage.getItem('mos_state_v1')||'{}');
 state.completed=state.completed||{};state.choices=state.choices||{};state.reminder=!!state.reminder;
 function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function csv(text){
@@ -727,7 +727,7 @@ function buildDailyIndex(){
   }
 }
 
-function save(){localStorage.setItem('mos_state_v14',JSON.stringify(state))}
+function save(){localStorage.setItem('mos_state_v15',JSON.stringify(state))}
 function done(id){return !!state.completed[id]}
 function dayId(w,d){return (w-1)*7+d}
 function todayDay(){const s=new Date(CONFIG.startDate),n=new Date();const a=new Date(s.getFullYear(),s.getMonth(),s.getDate()),b=new Date(n.getFullYear(),n.getMonth(),n.getDate());const diff=Math.floor((b-a)/86400000);return Math.max(0,Math.min(363,diff))}
@@ -939,6 +939,61 @@ function showToast(t){let x=document.getElementById('toast-x');if(!x){x=document
 function openSettings(){document.getElementById('nameInput').value=user==='游客'?'':user;document.getElementById('reminderBtn').textContent=state.reminder?'关闭提醒':'开启提醒';document.getElementById('reminderStatus').textContent=state.reminder?'已开启':'未开启。';document.getElementById('settingsModal').classList.add('open')}
 function closeSettings(){document.getElementById('settingsModal').classList.remove('open')}
 function toggleReminder(){state.reminder=!state.reminder;save();openSettings()}
+function exportProgress(){
+  save();
+  const payload={
+    format:'MOS-DIS-PROGRESS',
+    version:'1.0',
+    app:'MOS-DIS',
+    appVersion:'V1.5.1.1',
+    exportedAt:new Date().toISOString(),
+    user:user,
+    state:state
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+  a.href=url;
+  a.download='MOS-DIS-进度-'+stamp+'.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast('进度已导出');
+}
+function importProgress(event){
+  const file=event.target.files&&event.target.files[0];
+  event.target.value='';
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const payload=JSON.parse(String(reader.result||''));
+      if(!payload||payload.format!=='MOS-DIS-PROGRESS'||!payload.state)throw new Error('不是有效的 MOS-DIS 进度文件');
+      const incoming=payload.state;
+      if(typeof incoming!=='object'||typeof incoming.completed!=='object'||typeof incoming.choices!=='object')throw new Error('进度文件结构不完整');
+      const completedCount=Object.values(incoming.completed||{}).filter(Boolean).length;
+      const currentCount=Object.values(state.completed||{}).filter(Boolean).length;
+      if(currentCount>0 && !confirm('当前设备已有 '+currentCount+' 天完成记录。导入将以备份文件覆盖当前记录，确定继续吗？'))return;
+      state={
+        ...incoming,
+        completed:incoming.completed||{},
+        choices:incoming.choices||{},
+        reminder:!!incoming.reminder
+      };
+      user=typeof payload.user==='string'&&payload.user.trim()?payload.user.trim():user;
+      localStorage.setItem('mos_user',user);
+      save();
+      render();
+      showToast('已导入 '+completedCount+' 天进度');
+      closeSettings();
+    }catch(e){
+      alert('导入失败：'+e.message);
+    }
+  };
+  reader.readAsText(file,'utf-8');
+}
 function saveSettings(){const v=document.getElementById('nameInput').value.trim();if(v){user=v;localStorage.setItem('mos_user',user)}save();closeSettings();render();showToast('已保存')}
 load();
 </script>
